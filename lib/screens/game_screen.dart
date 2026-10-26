@@ -3,18 +3,21 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../logic/game_controller.dart';
+import '../services/music.dart';
 import '../mascot/mascot_controller.dart';
 import '../theme.dart';
+import '../widgets/gingham.dart';
 import '../widgets/marelle_trail.dart';
 import '../widgets/mascot_view.dart';
 import '../widgets/settings_sheet.dart';
 import '../widgets/swipe_card.dart';
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key, required this.game, required this.mascot});
+  const GameScreen({super.key, required this.game, required this.mascot, required this.music});
 
   final GameController game;
   final MascotController mascot;
+  final Music music;
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -56,10 +59,11 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Chalk.green,
+      backgroundColor: Candy.bg,
       body: SafeArea(
         child: Stack(
           children: [
+            Positioned.fill(child: GinghamBackground()),
             ListenableBuilder(
               listenable: widget.game,
               builder: (context, _) => _buildGame(context),
@@ -75,7 +79,7 @@ class _GameScreenState extends State<GameScreen> {
     final game = widget.game;
     return Column(
       children: [
-        _Header(game: game),
+        _Header(game: game, music: widget.music),
         Expanded(
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -122,7 +126,7 @@ class _GameScreenState extends State<GameScreen> {
           child: Text(
             'Touche le mot, ou glisse :  → je le sais   ← encore',
             textAlign: TextAlign.center,
-            style: Chalk.body(13, color: Chalk.whiteA(0.45)),
+            style: Candy.body(13, color: Candy.textA(0.65)),
           ),
         ),
         Padding(
@@ -137,29 +141,25 @@ class _GameScreenState extends State<GameScreen> {
     final game = widget.game;
     return Positioned.fill(
       child: Container(
-        color: const Color(0xEB22352A),
+        color: const Color(0xF2FFE1EA),
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Bravo ! 🎉', style: Chalk.display(44, color: Chalk.yellow)),
+            Text('Bravo ! 🎉', style: Candy.display(44, color: Candy.berry)),
             const SizedBox(height: 12),
             Text(
               '${GameController.casesPerRound} mots lus dans cette manche ! On continue ?',
               textAlign: TextAlign.center,
-              style: Chalk.body(16),
+              style: Candy.body(16),
             ),
             const SizedBox(height: 14),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-              decoration: BoxDecoration(
-                color: Chalk.whiteA(0.1),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Chalk.whiteA(0.2), width: 2),
-              ),
+              decoration: Candy.sticker(radius: 14),
               child: Text(
                 '🏆 Record de série : ${game.best} mots d\'affilée',
-                style: Chalk.display(15, color: Chalk.yellow, weight: FontWeight.w700),
+                style: Candy.display(15, color: Candy.berry, weight: FontWeight.w700),
               ),
             ),
             const SizedBox(height: 22),
@@ -167,12 +167,8 @@ class _GameScreenState extends State<GameScreen> {
               onTap: _continue,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-                decoration: BoxDecoration(
-                  color: Chalk.yellow,
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: const [BoxShadow(color: Color(0x40000000), offset: Offset(0, 3))],
-                ),
-                child: Text('Continuer', style: Chalk.display(18, color: Chalk.ink, weight: FontWeight.w700)),
+                decoration: Candy.sticker(fill: Candy.yellow, radius: 14),
+                child: Text('Continuer', style: Candy.display(18, color: Candy.ink, weight: FontWeight.w700)),
               ),
             ),
           ],
@@ -183,9 +179,10 @@ class _GameScreenState extends State<GameScreen> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.game});
+  const _Header({required this.game, required this.music});
 
   final GameController game;
+  final Music music;
 
   @override
   Widget build(BuildContext context) {
@@ -202,31 +199,27 @@ class _Header extends StatelessWidget {
                   children: [
                     Text.rich(
                       TextSpan(
-                        style: Chalk.display(30),
+                        style: Candy.display(30),
                         children: [
                           const TextSpan(text: 'La Marelle des '),
-                          TextSpan(text: 'Mots', style: Chalk.display(30, color: Chalk.yellow)),
+                          TextSpan(text: 'Mots', style: Candy.display(30, color: Candy.berry)),
                         ],
                       ),
                     ),
                     Text(
                       'Lecture rapide',
-                      style: Chalk.body(13, color: Chalk.whiteA(0.6)),
+                      style: Candy.body(13, color: Candy.textA(0.6)),
                     ),
                   ],
                 ),
               ),
               GestureDetector(
-                onTap: () => showSettingsSheet(context, game),
+                onTap: () => showSettingsSheet(context, game, music),
                 child: Container(
                   width: 44,
                   height: 44,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Chalk.whiteA(0.08),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: Chalk.whiteA(0.18), width: 2),
-                  ),
+                  decoration: Candy.sticker(radius: 14, lift: 2),
                   child: const Text('⚙️', style: TextStyle(fontSize: 18)),
                 ),
               ),
@@ -258,17 +251,13 @@ class _Stat extends StatelessWidget {
     return Container(
       width: 96,
       padding: const EdgeInsets.symmetric(vertical: 6),
-      decoration: BoxDecoration(
-        color: Chalk.whiteA(0.08),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Chalk.whiteA(0.18), width: 2),
-      ),
+      decoration: Candy.sticker(radius: 14, lift: 2),
       child: Column(
         children: [
-          Text('$value', style: Chalk.display(20, color: Chalk.yellow)),
+          Text('$value', style: Candy.display(20, color: Candy.berry)),
           Text(
             label.toUpperCase(),
-            style: Chalk.body(10, color: Chalk.whiteA(0.55), weight: FontWeight.w700),
+            style: Candy.body(10, color: Candy.textA(0.55), weight: FontWeight.w700),
           ),
         ],
       ),

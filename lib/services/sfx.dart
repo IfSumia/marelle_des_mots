@@ -19,7 +19,13 @@ class SilentSfx implements Sfx {
 
 /// One low-latency player per sound, so a tap and its "pop" feel instant.
 class AudioSfx implements Sfx {
-  static const names = ['pop', 'again', 'fanfare', 'boing', 'cheer'];
+  static final names = [
+    for (var i = 0; i < 10; i++) 'note$i',
+    'again',
+    'fanfare',
+    'boing',
+    'cheer',
+  ];
 
   final Map<String, AudioPlayer> _players = {};
 

@@ -85,7 +85,8 @@ class GameController extends ChangeNotifier {
       sfx.play('fanfare');
       _events.add(GameEvent(GameEventType.roundComplete, streak: streak));
     } else {
-      sfx.play('pop');
+      // one marimba note per trail square: reading climbs a scale
+      sfx.play('note${(roundProgress - 1).clamp(0, casesPerRound - 1)}');
       _events.add(GameEvent(GameEventType.known, streak: streak));
       _deal();
     }

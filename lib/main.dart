@@ -6,6 +6,7 @@ import 'logic/game_controller.dart';
 import 'mascot/mascot_controller.dart';
 import 'mascot/sprite_library.dart';
 import 'screens/game_screen.dart';
+import 'services/music.dart';
 import 'services/sfx.dart';
 import 'services/store.dart';
 import 'theme.dart';
@@ -33,17 +34,21 @@ Future<void> main() async {
     debugPrint('Sprites unavailable: $e');
   }
 
+  final music = Music(store);
+  await music.init();
+
   final game = GameController(library: library, store: store, sfx: sfx)..init();
   final mascot = MascotController(sprites: sprites, sfx: sfx);
 
-  runApp(MarelleApp(game: game, mascot: mascot));
+  runApp(MarelleApp(game: game, mascot: mascot, music: music));
 }
 
 class MarelleApp extends StatelessWidget {
-  const MarelleApp({super.key, required this.game, required this.mascot});
+  const MarelleApp({super.key, required this.game, required this.mascot, required this.music});
 
   final GameController game;
   final MascotController mascot;
+  final Music music;
 
   @override
   Widget build(BuildContext context) {
@@ -51,11 +56,11 @@ class MarelleApp extends StatelessWidget {
       title: 'La Marelle des Mots',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: Chalk.green,
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: Candy.bg,
         useMaterial3: true,
       ),
-      home: GameScreen(game: game, mascot: mascot),
+      home: GameScreen(game: game, mascot: mascot, music: music),
     );
   }
 }

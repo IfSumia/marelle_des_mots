@@ -38,7 +38,7 @@ class _Square extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = Chalk.trail[index % Chalk.trail.length];
+    final color = Candy.trail[index % Candy.trail.length];
     return AnimatedRotation(
       turns: done ? -3 / 360 : 0,
       duration: const Duration(milliseconds: 250),
@@ -56,13 +56,13 @@ class _Square extends StatelessWidget {
             color: done ? color : const Color(0x00000000),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: done ? const Color(0x00000000) : Chalk.whiteA(0.35),
+              color: done ? const Color(0x00000000) : Candy.textA(0.35),
               width: 2.5,
             ),
           ),
           child: Text(
             '${index + 1}',
-            style: Chalk.display(14, color: done ? Chalk.ink : Chalk.whiteA(0.35)),
+            style: Candy.display(14, color: done ? Candy.ink : Candy.textA(0.35)),
           ),
         ),
       ),

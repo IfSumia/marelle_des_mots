@@ -13,6 +13,9 @@ class Store {
   int get best => _prefs.getInt('best') ?? 0;
   Future<void> saveBest(int value) => _prefs.setInt('best', value);
 
+  bool get musicOn => _prefs.getBool('music') ?? true;
+  Future<void> saveMusicOn(bool value) => _prefs.setBool('music', value);
+
   DeckSettings get settings {
     final raw = _prefs.getString('settings');
     return raw == null ? const DeckSettings() : DeckSettings.fromJson(raw);

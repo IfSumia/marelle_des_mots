@@ -232,7 +232,7 @@ class _SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
 
     final tint = (_dx.abs() / 120).clamp(0.0, 1.0).toDouble();
     final knownSide = _dx > 0;
-    final accent = knownSide ? Chalk.grass : Chalk.yellow;
+    final accent = knownSide ? Candy.grass : Candy.yellow;
 
     return Opacity(
       opacity: opacity,
@@ -247,14 +247,11 @@ class _SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
               height: widget.height,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Chalk.card,
-                borderRadius: BorderRadius.circular(28),
-                border: Border.all(
-                  color: Color.lerp(Chalk.whiteA(0.25), accent, tint)!,
-                  width: 3,
-                ),
-                boxShadow: const [
-                  BoxShadow(color: Color(0x40000000), blurRadius: 14, offset: Offset(0, 6)),
+                color: Candy.card,
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(color: Color.lerp(Candy.text, accent, tint)!, width: 3.5),
+                boxShadow: [
+                  BoxShadow(color: Color.lerp(Candy.text, accent, tint)!, offset: const Offset(0, 8)),
                 ],
               ),
               child: Stack(
@@ -269,12 +266,12 @@ class _SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
                         child: Text(
                           _shown,
                           maxLines: 1,
-                          style: Chalk.body(
+                          style: Candy.body(
                             100,
                             weight: FontWeight.w900,
                             style: FontStyle.italic,
                           ).copyWith(
-                            shadows: const [Shadow(color: Color(0x2E000000), offset: Offset(0, 3))],
+                            shadows: const [Shadow(color: Color(0x40F2677F), offset: Offset(0, 4))],
                           ),
                         ),
                       ),
@@ -293,7 +290,7 @@ class _SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
                           ),
                           child: Text(
                             knownSide ? 'Je le sais ! ✓' : 'Encore ! ↺',
-                            style: Chalk.display(20, color: Chalk.ink),
+                            style: Candy.display(20, color: Candy.ink),
                           ),
                         ),
                       ),
@@ -315,7 +312,7 @@ class _DustPainter extends CustomPainter {
   final double t;
   final int seed;
 
-  static const _colors = [Chalk.yellow, Chalk.coral, Chalk.sky, Chalk.grass, Chalk.lilac];
+  static const _colors = [Candy.yellow, Candy.coral, Candy.sky, Candy.grass, Candy.lilac];
 
   @override
   void paint(Canvas canvas, Size size) {

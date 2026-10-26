@@ -3,25 +3,27 @@ import 'package:flutter/material.dart';
 import '../logic/deck_settings.dart';
 import '../logic/game_controller.dart';
 import '../logic/word_pool.dart';
+import '../services/music.dart';
 import '../theme.dart';
 
 /// Parent settings: which lessons go into the deck.
-Future<void> showSettingsSheet(BuildContext context, GameController game) {
+Future<void> showSettingsSheet(BuildContext context, GameController game, Music music) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Chalk.greenDark,
+    backgroundColor: Candy.sheet,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
-    builder: (context) => _SettingsSheet(game: game),
+    builder: (context) => _SettingsSheet(game: game, music: music),
   );
 }
 
 class _SettingsSheet extends StatefulWidget {
-  const _SettingsSheet({required this.game});
+  const _SettingsSheet({required this.game, required this.music});
 
   final GameController game;
+  final Music music;
 
   @override
   State<_SettingsSheet> createState() => _SettingsSheetState();
@@ -88,7 +90,7 @@ class _SettingsSheetState extends State<_SettingsSheet> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Réglages', style: Chalk.display(24)),
+              Text('Réglages', style: Candy.display(24)),
               const SizedBox(height: 14),
               _label('Leçons'),
               Wrap(
@@ -107,16 +109,26 @@ class _SettingsSheetState extends State<_SettingsSheet> {
               const SizedBox(height: 4),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                activeColor: Chalk.yellow,
-                title: Text('Cumulatif', style: Chalk.body(16)),
+                activeColor: Candy.yellow,
+                title: Text('Cumulatif', style: Candy.body(16)),
                 subtitle: Text(
                   _draft.cumulative
                       ? 'Touche une leçon : toutes les leçons jusque-là sont incluses.'
                       : 'Touche les leçons une par une pour les choisir.',
-                  style: Chalk.body(12, color: Chalk.whiteA(0.6)),
+                  style: Candy.body(12, color: Candy.textA(0.6)),
                 ),
                 value: _draft.cumulative,
                 onChanged: _setCumulative,
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                activeColor: Candy.yellow,
+                title: Text('Musique', style: Candy.body(16)),
+                value: widget.music.enabled,
+                onChanged: (v) async {
+                  await widget.music.setEnabled(v);
+                  if (mounted) setState(() {});
+                },
               ),
               _label('En plus'),
               Wrap(
@@ -142,24 +154,24 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                   minLines: 3,
                   maxLines: 5,
                   onChanged: (_) => setState(() {}),
-                  style: Chalk.body(14),
-                  cursorColor: Chalk.yellow,
+                  style: Candy.body(14),
+                  cursorColor: Candy.yellow,
                   decoration: InputDecoration(
                     hintText: 'Colle ici des mots séparés par des espaces ou des virgules…',
-                    hintStyle: Chalk.body(14, color: Chalk.whiteA(0.35)),
+                    hintStyle: Candy.body(14, color: Candy.textA(0.35)),
                     filled: true,
-                    fillColor: Chalk.whiteA(0.06),
+                    fillColor: Candy.textA(0.06),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Chalk.whiteA(0.2), width: 2),
+                      borderSide: BorderSide(color: Candy.textA(0.2), width: 2),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Chalk.whiteA(0.2), width: 2),
+                      borderSide: BorderSide(color: Candy.textA(0.2), width: 2),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Chalk.yellow, width: 2),
+                      borderSide: const BorderSide(color: Candy.yellow, width: 2),
                     ),
                   ),
                 ),
@@ -167,7 +179,7 @@ class _SettingsSheetState extends State<_SettingsSheet> {
               const SizedBox(height: 14),
               Text(
                 '$count mots dans le paquet',
-                style: Chalk.body(13, color: Chalk.whiteA(0.6)),
+                style: Candy.body(13, color: Candy.textA(0.6)),
               ),
               const SizedBox(height: 14),
               Wrap(
@@ -209,7 +221,7 @@ class _SettingsSheetState extends State<_SettingsSheet> {
         padding: const EdgeInsets.only(bottom: 8),
         child: Text(
           text.toUpperCase(),
-          style: Chalk.body(12, color: Chalk.yellow, weight: FontWeight.w800),
+          style: Candy.body(12, color: Candy.berry, weight: FontWeight.w800),
         ),
       );
 }
@@ -227,9 +239,9 @@ class _Chip extends StatelessWidget {
     final fill = !on
         ? const Color(0x00000000)
         : strong
-            ? Chalk.yellow
-            : Chalk.whiteA(0.22);
-    final textColor = on && strong ? Chalk.ink : Chalk.white;
+            ? Candy.yellow
+            : Candy.textA(0.22);
+    final textColor = on && strong ? Candy.ink : Candy.text;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -239,9 +251,9 @@ class _Chip extends StatelessWidget {
         decoration: BoxDecoration(
           color: fill,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: on ? fill : Chalk.whiteA(0.3), width: 2),
+          border: Border.all(color: on ? fill : Candy.textA(0.3), width: 2),
         ),
-        child: Text(label, style: Chalk.display(16, color: textColor, weight: FontWeight.w700)),
+        child: Text(label, style: Candy.display(16, color: textColor, weight: FontWeight.w700)),
       ),
     );
   }
@@ -261,13 +273,13 @@ class _Button extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         decoration: BoxDecoration(
-          color: primary ? Chalk.yellow : Chalk.whiteA(0.15),
+          color: primary ? Candy.yellow : Candy.textA(0.15),
           borderRadius: BorderRadius.circular(12),
           boxShadow: const [BoxShadow(color: Color(0x40000000), offset: Offset(0, 3))],
         ),
         child: Text(
           label,
-          style: Chalk.display(14, color: primary ? Chalk.ink : Chalk.white, weight: FontWeight.w700),
+          style: Candy.display(14, color: primary ? Candy.ink : Candy.text, weight: FontWeight.w700),
         ),
       ),
     );
