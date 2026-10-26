@@ -1,0 +1,4 @@
+analyzer:
+  errors:
+    # the code stays on Flutter's stable channel APIs; keep the output quiet
+    deprecated_member_use: ignore
